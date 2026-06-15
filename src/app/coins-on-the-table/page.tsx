@@ -1,7 +1,11 @@
 import { BackLink } from "@/components/BackLink";
 import { CoinsOnTheTable } from "@/components/prototypes/CoinsOnTheTable";
+import { loadTexts } from "@/lib/store";
 
-export default function CoinsPage() {
+export const dynamic = "force-dynamic";
+
+export default async function CoinsPage() {
+  const texts = await loadTexts();
   return (
     <div className="mx-auto flex w-full max-w-[1040px] flex-col px-5 pb-8 pt-5 sm:px-7 lg:h-[calc(100svh-60px)] lg:overflow-hidden lg:pb-5">
       <BackLink />
@@ -20,7 +24,7 @@ export default function CoinsPage() {
       </div>
 
       <div className="mt-4 flex flex-1 items-center justify-center lg:mt-5">
-        <CoinsOnTheTable />
+        <CoinsOnTheTable texts={texts} />
       </div>
     </div>
   );

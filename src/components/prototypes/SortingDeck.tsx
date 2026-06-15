@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion, useMotionValue, useTransform, animate } from "motion/react";
 import { Check, CheckCheck, X, RotateCcw } from "lucide-react";
-import { PRIORITIES, type Priority } from "@/lib/priorities";
+import { applyTexts, type Priority, type PriorityText } from "@/lib/priorities";
 
 type Verdict = "essential" | "nice" | "skip";
 
@@ -19,22 +19,24 @@ const VERDICTS: Record<
 const SWIPE_X = 110;
 const SWIPE_Y = 110;
 
-export function SortingDeck() {
+export function SortingDeck({ texts }: { texts?: PriorityText[] }) {
+  const priorities = useMemo(() => applyTexts(texts), [texts]);
+
   const [index, setIndex] = useState(0);
   const [decisions, setDecisions] = useState<Record<string, Verdict>>({});
   const [trigger, setTrigger] = useState<Verdict | null>(null);
 
-  const current = PRIORITIES[index];
-  const done = index >= PRIORITIES.length;
+  const current = priorities[index];
+  const done = index >= priorities.length;
 
   const onCommitted = useCallback(
     (verdict: Verdict) => {
-      const card = PRIORITIES[index];
+      const card = priorities[index];
       if (card) setDecisions((d) => ({ ...d, [card.id]: verdict }));
       setTrigger(null);
       setIndex((i) => i + 1);
     },
-    [index],
+    [index, priorities],
   );
 
   useEffect(() => {
@@ -56,12 +58,12 @@ export function SortingDeck() {
 
   const grouped = useMemo(() => {
     const g: Record<Verdict, Priority[]> = { essential: [], nice: [], skip: [] };
-    PRIORITIES.forEach((p) => {
+    priorities.forEach((p) => {
       const v = decisions[p.id];
       if (v) g[v].push(p);
     });
     return g;
-  }, [decisions]);
+  }, [decisions, priorities]);
 
   if (done) {
     return <Results grouped={grouped} onReset={reset} />;
@@ -69,11 +71,11 @@ export function SortingDeck() {
 
   return (
     <div className="flex w-full flex-col items-center">
-      <ProgressBar current={index} total={PRIORITIES.length} />
+      <ProgressBar current={index} total={priorities.length} />
 
       <div className="relative mt-7 h-[330px] w-full max-w-[360px] sm:h-[360px]">
         {[2, 1].map((depth) => {
-          const card = PRIORITIES[index + depth];
+          const card = priorities[index + depth];
           if (!card) return null;
           return (
             <div

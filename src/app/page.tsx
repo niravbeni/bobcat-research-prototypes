@@ -1,5 +1,10 @@
 import Link from "next/link";
-import { LayersIcon, CoinsIcon, CircleDotIcon } from "lucide-react";
+import {
+  LayersIcon,
+  CoinsIcon,
+  CircleDotIcon,
+  SlidersHorizontal,
+} from "lucide-react";
 import { PROTOTYPES } from "@/lib/priorities";
 
 const ICONS = {
@@ -24,8 +29,17 @@ export default function Home() {
         </p>
       </section>
 
-      <div className="mb-[18px] text-[12px] font-semibold uppercase tracking-[0.16em] text-[var(--ink-3)]">
-        Prototypes
+      <div className="mb-[18px] flex items-center justify-between gap-3">
+        <span className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[var(--ink-3)]">
+          Prototypes
+        </span>
+        <Link
+          href="/admin"
+          className="inline-flex items-center gap-1.5 rounded-full border border-[var(--rule-2)] bg-white px-3.5 py-1.5 text-[12.5px] font-semibold text-[var(--ink-2)] no-underline shadow-card-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--purple-200)] hover:text-[var(--purple-700)]"
+        >
+          <SlidersHorizontal size={14} strokeWidth={2.3} />
+          Edit content
+        </Link>
       </div>
       <div className="grid grid-cols-1 gap-5 md:grid-cols-3 sm:gap-6">
         {PROTOTYPES.map((p, i) => {

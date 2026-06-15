@@ -8,7 +8,13 @@ import {
   RotateCcw,
   type LucideIcon,
 } from "lucide-react";
-import { PRIORITIES, type PriorityCategory } from "@/lib/priorities";
+import {
+  applyTexts,
+  PRIORITIES,
+  type Priority,
+  type PriorityCategory,
+  type PriorityText,
+} from "@/lib/priorities";
 import { RankedResults, type RankedItem } from "./RankedResults";
 
 const ICON_BY_ID: Record<string, LucideIcon> = Object.fromEntries(
@@ -58,8 +64,8 @@ const rand = (n: number) => {
 const COLS = [0.445, 0.555];
 const ROWS = [0.15, 0.38, 0.62, 0.85];
 
-const initial = (): Bubble[] =>
-  PRIORITIES.map((p, i) => ({
+const initial = (priorities: Priority[]): Bubble[] =>
+  priorities.map((p, i) => ({
     id: p.id,
     title: p.title,
     short: p.short,
@@ -69,8 +75,10 @@ const initial = (): Bubble[] =>
     fy: ROWS[Math.floor(i / 2)] + (rand(i * 2 + 1) - 0.5) * 0.06,
   }));
 
-export function WeightingGame() {
-  const [bubbles, setBubbles] = useState<Bubble[]>(initial);
+export function WeightingGame({ texts }: { texts?: PriorityText[] }) {
+  const priorities = useMemo(() => applyTexts(texts), [texts]);
+
+  const [bubbles, setBubbles] = useState<Bubble[]>(() => initial(priorities));
   const [showResults, setShowResults] = useState(false);
   const [hover, setHover] = useState<Cat>(null);
 
@@ -144,7 +152,7 @@ export function WeightingGame() {
 
   const reset = () => {
     stopGrow();
-    setBubbles(initial());
+    setBubbles(initial(priorities));
     setShowResults(false);
     setHover(null);
   };

@@ -18,6 +18,9 @@
 .DS_Store
 *.pem
 
+# local content store (dev fallback for the admin editor)
+/.data
+
 # debug
 npm-debug.log*
 yarn-debug.log*

@@ -1,7 +1,11 @@
 import { BackLink } from "@/components/BackLink";
 import { WeightingGame } from "@/components/prototypes/WeightingGame";
+import { loadTexts } from "@/lib/store";
 
-export default function WeightingGamePage() {
+export const dynamic = "force-dynamic";
+
+export default async function WeightingGamePage() {
+  const texts = await loadTexts();
   return (
     <div className="mx-auto flex w-full max-w-[1040px] flex-col px-5 pb-8 pt-5 sm:px-7 lg:h-[calc(100svh-60px)] lg:overflow-hidden lg:pb-5">
       <BackLink />
@@ -20,7 +24,7 @@ export default function WeightingGamePage() {
       </div>
 
       <div className="mt-4 flex flex-1 items-center justify-center lg:mt-5">
-        <WeightingGame />
+        <WeightingGame texts={texts} />
       </div>
     </div>
   );

@@ -105,6 +105,52 @@ export const PRIORITIES: Priority[] = [
   },
 ];
 
+/**
+ * The serialisable subset of a priority that the admin page can edit. Icons and
+ * category stay fixed in code; only the wording is customisable.
+ */
+export type PriorityText = {
+  id: string;
+  title: string;
+  short: string;
+  question: string;
+};
+
+/** Pull the editable text out of a priority list. */
+export function extractTexts(base: Priority[] = PRIORITIES): PriorityText[] {
+  return base.map((p) => ({
+    id: p.id,
+    title: p.title,
+    short: p.short,
+    question: p.question,
+  }));
+}
+
+/** The built-in defaults, used as a fallback and for "reset to defaults". */
+export const DEFAULT_TEXTS: PriorityText[] = extractTexts();
+
+/**
+ * Merge stored text overrides onto the base priorities (keeping their icons and
+ * categories). Empty fields fall back to the default wording.
+ */
+export function applyTexts(
+  texts?: PriorityText[] | null,
+  base: Priority[] = PRIORITIES,
+): Priority[] {
+  if (!texts || texts.length === 0) return base;
+  const byId = new Map(texts.map((t) => [t.id, t]));
+  return base.map((p) => {
+    const t = byId.get(p.id);
+    if (!t) return p;
+    return {
+      ...p,
+      title: t.title?.trim() || p.title,
+      short: t.short?.trim() || p.short,
+      question: t.question?.trim() || p.question,
+    };
+  });
+}
+
 export const PROTOTYPES = [
   {
     slug: "sorting-deck",

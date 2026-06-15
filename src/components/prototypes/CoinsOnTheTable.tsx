@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { RotateCcw, Wallet, Check, ListOrdered } from "lucide-react";
-import { PRIORITIES } from "@/lib/priorities";
+import { applyTexts, type Priority, type PriorityText } from "@/lib/priorities";
 import { Coin } from "./Coin";
 import { RankedResults, type RankedItem } from "./RankedResults";
 
@@ -15,7 +15,9 @@ type DragState = {
   moved: boolean;
 };
 
-export function CoinsOnTheTable() {
+export function CoinsOnTheTable({ texts }: { texts?: PriorityText[] }) {
+  const priorities = useMemo(() => applyTexts(texts), [texts]);
+
   const [alloc, setAlloc] = useState<Record<string, number>>({});
   const [drag, setDrag] = useState<DragState | null>(null);
   const [hover, setHover] = useState<"pile" | string | null>(null);
@@ -31,7 +33,7 @@ export function CoinsOnTheTable() {
   const remaining = TOKENS - spent;
 
   const findTarget = useCallback((x: number, y: number): "pile" | string | null => {
-    for (const p of PRIORITIES) {
+    for (const p of priorities) {
       const r = bucketRefs.current[p.id]?.getBoundingClientRect();
       if (r && x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) {
         return p.id;
@@ -42,7 +44,7 @@ export function CoinsOnTheTable() {
       return "pile";
     }
     return null;
-  }, []);
+  }, [priorities]);
 
   const commit = useCallback(
     (state: DragState, x: number, y: number) => {
@@ -119,7 +121,7 @@ export function CoinsOnTheTable() {
   };
 
   const rankedItems: RankedItem[] = useMemo(() => {
-    const sorted = PRIORITIES.map((p) => ({ p, count: alloc[p.id] ?? 0 })).sort(
+    const sorted = priorities.map((p) => ({ p, count: alloc[p.id] ?? 0 })).sort(
       (a, b) => b.count - a.count,
     );
     const maxCount = sorted[0]?.count ?? 0;
@@ -144,7 +146,7 @@ export function CoinsOnTheTable() {
         rank: count === 0 ? undefined : rank,
       };
     });
-  }, [alloc]);
+  }, [alloc, priorities]);
 
   if (showResults) {
     return (
@@ -174,7 +176,7 @@ export function CoinsOnTheTable() {
       />
 
       <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
-        {PRIORITIES.map((p) => {
+        {priorities.map((p) => {
           const count = alloc[p.id] ?? 0;
           const liftOne = drag?.from === p.id;
           const visible = count - (liftOne ? 1 : 0);
@@ -311,7 +313,7 @@ function Bucket({
   onCoinDown,
 }: {
   ref: React.Ref<HTMLDivElement>;
-  priority: (typeof PRIORITIES)[number];
+  priority: Priority;
   count: number;
   visible: number;
   highlight: boolean;

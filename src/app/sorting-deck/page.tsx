@@ -1,7 +1,11 @@
 import { BackLink } from "@/components/BackLink";
 import { SortingDeck } from "@/components/prototypes/SortingDeck";
+import { loadTexts } from "@/lib/store";
 
-export default function SortingDeckPage() {
+export const dynamic = "force-dynamic";
+
+export default async function SortingDeckPage() {
+  const texts = await loadTexts();
   return (
     <div className="mx-auto flex w-full max-w-[1040px] flex-col px-5 pb-8 pt-5 sm:px-7 lg:h-[calc(100svh-60px)] lg:overflow-hidden lg:pb-5">
       <BackLink />
@@ -20,7 +24,7 @@ export default function SortingDeckPage() {
 
       <div className="mt-4 flex flex-1 items-center justify-center lg:mt-5">
         <div className="w-full max-w-[700px] rounded-[26px] border border-[var(--rule)] bg-white px-5 py-7 shadow-card sm:px-8 sm:py-8">
-          <SortingDeck />
+          <SortingDeck texts={texts} />
         </div>
       </div>
     </div>
