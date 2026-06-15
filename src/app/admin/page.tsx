@@ -185,6 +185,42 @@ export default function AdminPage() {
     );
   }
 
+  const statusNode =
+    status || error ? (
+      <p
+        className="text-[13.5px] font-medium"
+        style={{ color: error ? "var(--magenta-600)" : "var(--purple-700)" }}
+      >
+        {error ?? status}
+      </p>
+    ) : null;
+
+  const actions = (
+    <div className="flex flex-wrap items-center gap-3">
+      <button
+        type="button"
+        onClick={resetDefaults}
+        disabled={saving || loading}
+        className="triage-btn inline-flex items-center gap-1.5 rounded-full border border-[var(--rule-2)] bg-white px-4 py-2 text-[13px] font-semibold text-[var(--ink-2)] disabled:opacity-40"
+      >
+        <RotateCcw size={15} strokeWidth={2.3} /> Reset to defaults
+      </button>
+      <button
+        type="button"
+        onClick={save}
+        disabled={saving || loading}
+        className="triage-btn inline-flex items-center gap-1.5 rounded-full bg-grad-purple px-5 py-2 text-[13px] font-semibold text-white shadow-purple disabled:opacity-40 disabled:shadow-none"
+      >
+        {saving ? (
+          <Loader2 size={15} className="animate-spin" strokeWidth={2.4} />
+        ) : (
+          <Save size={15} strokeWidth={2.4} />
+        )}
+        Save changes
+      </button>
+    </div>
+  );
+
   return (
     <div className="mx-auto w-full max-w-[860px] px-5 pb-20 pt-10 sm:px-7">
       <div className="flex flex-wrap items-end justify-between gap-3">
@@ -226,6 +262,11 @@ export default function AdminPage() {
             {backend === "database" ? "Database connected" : "Local file (dev)"}
           </span>
         )}
+      </div>
+
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--rule)] pt-5">
+        <div className="min-h-[20px]">{statusNode}</div>
+        {actions}
       </div>
 
       {loading ? (
@@ -273,37 +314,9 @@ export default function AdminPage() {
         </div>
       )}
 
-      {(status || error) && (
-        <p
-          className="mt-5 text-[13.5px] font-medium"
-          style={{ color: error ? "var(--magenta-600)" : "var(--purple-700)" }}
-        >
-          {error ?? status}
-        </p>
-      )}
-
-      <div className="sticky bottom-4 mt-6 flex flex-wrap items-center justify-end gap-3 rounded-full border border-[var(--rule)] bg-white/85 px-4 py-3 shadow-card backdrop-blur-md">
-        <button
-          type="button"
-          onClick={resetDefaults}
-          disabled={saving || loading}
-          className="triage-btn inline-flex items-center gap-1.5 rounded-full border border-[var(--rule-2)] bg-white px-4 py-2 text-[13px] font-semibold text-[var(--ink-2)] disabled:opacity-40"
-        >
-          <RotateCcw size={15} strokeWidth={2.3} /> Reset to defaults
-        </button>
-        <button
-          type="button"
-          onClick={save}
-          disabled={saving || loading}
-          className="triage-btn inline-flex items-center gap-1.5 rounded-full bg-grad-purple px-5 py-2 text-[13px] font-semibold text-white shadow-purple disabled:opacity-40 disabled:shadow-none"
-        >
-          {saving ? (
-            <Loader2 size={15} className="animate-spin" strokeWidth={2.4} />
-          ) : (
-            <Save size={15} strokeWidth={2.4} />
-          )}
-          Save changes
-        </button>
+      <div className="sticky bottom-4 mt-6 flex flex-wrap items-center justify-between gap-3 rounded-[20px] border border-[var(--rule)] bg-white/85 px-4 py-3 shadow-card backdrop-blur-md">
+        <div className="min-h-[20px] pl-1">{statusNode}</div>
+        {actions}
       </div>
     </div>
   );
